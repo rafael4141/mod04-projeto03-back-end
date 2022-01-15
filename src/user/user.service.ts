@@ -97,7 +97,7 @@ export class UserService {
     });
 
     if (!videoCard) {
-      throw new NotFoundException('Filme não encontrada');
+      throw new NotFoundException('Video card not found');
     }
 
     const userVideoCard = await this.database.user.findUnique({
@@ -131,7 +131,7 @@ export class UserService {
         },
       });
 
-      return { message: 'Filme removido da lista' };
+      return { message: 'Video card removed to cart' };
     } else {
       await this.database.user.update({
         where: { id: userData.id },
@@ -147,7 +147,7 @@ export class UserService {
         },
       });
 
-      return { message: 'Filme adicionada na lista' };
+      return { message: 'Video card added to cart' };
     }
   }
 
