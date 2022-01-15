@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  videoCard:
+    image: postgres
+    ports:
+    - '5432:5432'
+    container_name: videoCard
+    restart: always
+    volumes:
+      - videoCard-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: videoCard
+      POSTGRES_PASSWORD: videoCard
+      POSTGRES_DB: videoCard
+
+volumes:
+  videoCard-data:
