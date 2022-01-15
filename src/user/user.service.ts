@@ -97,22 +97,58 @@ export class UserService {
     });
 
     if (!videoCard) {
-      throw new NotFoundException('Film not found');
+      throw new NotFoundException('Filme não encontrada');
     }
 
-    const user = await this.database.user.update({
+    const userVideoCard = await this.database.user.findUnique({
       where: { id: userData.id },
-      data: {
-        videoCards: {
-          connect: { id: videoCard.id },
-        },
-      },
       include: {
         videoCards: true,
       },
     });
-    delete user.password;
-    return user;
+
+    const userVideoCardArray = userVideoCard.videoCards;
+    let foundVideoCard = false;
+
+    userVideoCardArray.map((movie) => {
+      if (movie.id === videoCardId) {
+        foundVideoCard = true;
+      }
+    });
+
+    if (foundVideoCard) {
+      await this.database.user.update({
+        where: { id: userData.id },
+        data: {
+          videoCards: {
+            disconnect: {
+              id: videoCard.id,
+            },
+          },
+        },
+        include: {
+          videoCards: true,
+        },
+      });
+
+      return { message: 'Filme removido da lista' };
+    } else {
+      await this.database.user.update({
+        where: { id: userData.id },
+        data: {
+          videoCards: {
+            connect: {
+              id: videoCard.id,
+            },
+          },
+        },
+        include: {
+          videoCards: true,
+        },
+      });
+
+      return { message: 'Filme adicionada na lista' };
+    }
   }
 
   async seeList(user: User) {
